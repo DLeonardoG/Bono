@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feliz cumpleaños</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="description" content="Tarjeta de feliz cumpleaños personalizada con Tailwind y JavaScript" />
+</head>
+<body class="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 text-zinc-800">
+  <main class="max-w-3xl mx-auto px-6 py-16">
+    <section class="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 md:p-12 border border-white">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">
+            🎉 <span class="text-fuchsia-700">¡Feliz cumpleaños</span> <span id="nombre" class="text-fuchsia-900">Amiga</span>!
+          </h1>
+          <p class="mt-4 text-lg md:text-xl text-zinc-600" id="mensaje">
+            Con mucho cariño y aprecio, estoy creando un <span class="font-semibold text-fuchsia-700">bono</span>
+            para unas consultas con la doctora <span class="font-semibold">Leydi Gómez</span>.
+          </p>
+        </div>
+        <img alt="Globos de cumpleaños" class="w-24 md:w-32" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f388.svg" />
+      </div>
+
+      <div class="mt-10 grid gap-4 md:grid-cols-2">
+        <label class="block">
+          <span class="text-sm text-zinc-600">Nombre de la persona</span>
+          <input id="inputNombre" type="text" placeholder="Escribe el nombre…" class="mt-1 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none ring-0 focus:border-fuchsia-500" />
+        </label>
+
+        <label class="block">
+          <span class="text-sm text-zinc-600">Mensaje adicional (opcional)</span>
+          <input id="inputNota" type="text" placeholder="Ej: ¡Que todos tus deseos se cumplan!" class="mt-1 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none ring-0 focus:border-fuchsia-500" />
+        </label>
+      </div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <button id="btnAplicar" class="rounded-xl bg-fuchsia-700/90 hover:bg-fuchsia-700 text-white px-5 py-3 font-semibold shadow">
+          Aplicar
+        </button>
+        <button id="btnCompartir" class="rounded-xl border border-zinc-300 hover:bg-zinc-50 px-5 py-3 font-semibold">
+          Compartir enlace
+        </button>
+        <button id="btnImprimir" class="rounded-xl border border-zinc-300 hover:bg-zinc-50 px-5 py-3 font-semibold">
+          Imprimir / Guardar PDF
+        </button>
+      </div>
+
+      <p class="mt-6 text-sm text-zinc-500">
+        Tip: también puedes pasar el nombre por la URL, ejemplo: <code>?name=Valentina&note=¡Feliz día!</code>
+      </p>
+
+      <hr class="my-10 border-zinc-200" />
+
+      <div class="grid gap-4 md:grid-cols-3">
+        <div class="rounded-2xl bg-gradient-to-br from-fuchsia-600 to-pink-500 text-white p-6 shadow-lg">
+          <p class="uppercase text-xs tracking-widest/relaxed opacity-90">Bono</p>
+          <p class="mt-1 text-3xl font-extrabold">Consultas</p>
+          <p class="mt-2 text-sm opacity-95">Doctora Leydi Gómez</p>
+        </div>
+        <div class="rounded-2xl bg-white/90 border border-zinc-200 p-6">
+          <p class="text-sm text-zinc-500">Para</p>
+          <p class="text-2xl font-semibold" id="cardNombre">Amiga</p>
+          <p class="mt-2 text-sm text-zinc-500">Con cariño</p>
+          <p class="text-lg" id="cardNota">🎂✨</p>
+        </div>
+        <div class="rounded-2xl bg-white/90 border border-zinc-200 p-6">
+          <p class="text-sm text-zinc-500">Emitido por</p>
+          <p class="text-xl font-semibold" id="emisor">Tu persona favorita 💜</p>
+          <p class="mt-2 text-xs text-zinc-500">No requiere pago aquí — sólo un abrazo y una sonrisa.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Utilidad para leer parámetros de la URL
+    function getParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name) || "";
+    }
+
+    const nombreEl = document.getElementById("nombre");
+    const cardNombreEl = document.getElementById("cardNombre");
+    const inputNombre = document.getElementById("inputNombre");
+    const inputNota = document.getElementById("inputNota");
+    const cardNotaEl = document.getElementById("cardNota");
+
+    // Precarga con ?name=&note=
+    const initialName = getParam("name");
+    const initialNote = getParam("note");
+    if (initialName) {
+      nombreEl.textContent = initialName;
+      cardNombreEl.textContent = initialName;
+      inputNombre.value = initialName;
+    }
+    if (initialNote) {
+      cardNotaEl.textContent = initialNote;
+      inputNota.value = initialNote;
+    }
+
+    // Botón Aplicar
+    document.getElementById("btnAplicar").addEventListener("click", () => {
+      const name = (inputNombre.value || "Amiga").trim();
+      const note = (inputNota.value || "🎂✨").trim();
+      nombreEl.textContent = name;
+      cardNombreEl.textContent = name;
+      cardNotaEl.textContent = note;
+    });
+
+    // Compartir enlace con parámetros
+    document.getElementById("btnCompartir").addEventListener("click", async () => {
+      const name = encodeURIComponent((inputNombre.value || "Amiga").trim());
+      const note = encodeURIComponent((inputNota.value || "🎂✨").trim());
+      const url = `${location.origin}${location.pathname}?name=${name}&note=${note}`;
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        alert("Enlace copiado al portapapeles");
+      } else {
+        prompt("Copia este enlace:", url);
+      }
+    });
+
+    // Imprimir / Guardar como PDF
+    document.getElementById("btnImprimir").addEventListener("click", () => {
+      window.print();
+    });
+  </script>
+</body>
+</html>
