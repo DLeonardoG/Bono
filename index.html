@@ -23,7 +23,8 @@
         <img alt="Globos de cumpleaños" class="w-24 md:w-32" src="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f388.svg" />
       </div>
 
-      <div class="mt-10 grid gap-4 md:grid-cols-2">
+      <!-- Panel oculto si se pasa ?p=ID -->
+      <div id="editor" class="mt-10 grid gap-4 md:grid-cols-2">
         <label class="block">
           <span class="text-sm text-zinc-600">Nombre de la persona</span>
           <input id="inputNombre" type="text" placeholder="Escribe el nombre…" class="mt-1 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none ring-0 focus:border-fuchsia-500" />
@@ -33,22 +34,22 @@
           <span class="text-sm text-zinc-600">Mensaje adicional (opcional)</span>
           <input id="inputNota" type="text" placeholder="Ej: ¡Que todos tus deseos se cumplan!" class="mt-1 w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 outline-none ring-0 focus:border-fuchsia-500" />
         </label>
-      </div>
 
-      <div class="mt-6 flex flex-wrap items-center gap-3">
-        <button id="btnAplicar" class="rounded-xl bg-fuchsia-700/90 hover:bg-fuchsia-700 text-white px-5 py-3 font-semibold shadow">
-          Aplicar
-        </button>
-        <button id="btnCompartir" class="rounded-xl border border-zinc-300 hover:bg-zinc-50 px-5 py-3 font-semibold">
-          Compartir enlace
-        </button>
-        <button id="btnImprimir" class="rounded-xl border border-zinc-300 hover:bg-zinc-50 px-5 py-3 font-semibold">
-          Imprimir / Guardar PDF
-        </button>
+        <div class="md:col-span-2 flex flex-wrap items-center gap-3">
+          <button id="btnAplicar" class="rounded-xl bg-fuchsia-700/90 hover:bg-fuchsia-700 text-white px-5 py-3 font-semibold shadow">
+            Aplicar
+          </button>
+          <button id="btnCompartir" class="rounded-xl border border-zinc-300 hover:bg-zinc-50 px-5 py-3 font-semibold">
+            Compartir enlace
+          </button>
+          <button id="btnImprimir" class="rounded-xl border border-zinc-300 hover:bg-zinc-50 px-5 py-3 font-semibold">
+            Imprimir / Guardar PDF
+          </button>
+        </div>
       </div>
 
       <p class="mt-6 text-sm text-zinc-500">
-        Tip: también puedes pasar el nombre por la URL, ejemplo: <code>?name=Valentina&note=¡Feliz día!</code>
+        Tip: también puedes pasar el ID por la URL, ejemplo: <code>?p=dario</code>
       </p>
 
       <hr class="my-10 border-zinc-200" />
@@ -62,13 +63,25 @@
         <div class="rounded-2xl bg-white/90 border border-zinc-200 p-6">
           <p class="text-sm text-zinc-500">Para</p>
           <p class="text-2xl font-semibold" id="cardNombre">Amiga</p>
-          <p class="mt-2 text-sm text-zinc-500">Con cariño</p>
+          <p class="mt-2 text-sm text-zinc-500">De</p>
+          <p class="text-lg font-medium" id="cardDe">Tu persona favorita 💜</p>
+          <p class="mt-3 text-sm text-zinc-500">Nota</p>
           <p class="text-lg" id="cardNota">🎂✨</p>
         </div>
         <div class="rounded-2xl bg-white/90 border border-zinc-200 p-6">
-          <p class="text-sm text-zinc-500">Emitido por</p>
-          <p class="text-xl font-semibold" id="emisor">Tu persona favorita 💜</p>
-          <p class="mt-2 text-xs text-zinc-500">No requiere pago aquí — sólo un abrazo y una sonrisa.</p>
+          <p class="text-sm text-zinc-500">Psicoterapeuta</p>
+          <p class="text-xl font-semibold" id="docNombre">Leydi Gómez</p>
+          <ul class="mt-2 text-sm text-zinc-600 space-y-1" id="docServicios">
+            <li>Atención psicología</li>
+            <li>Presencial y online</li>
+          </ul>
+          <div class="mt-3 text-sm">
+            <p class="text-zinc-500">Agenda tu consulta</p>
+            <p class="font-semibold" id="docTelefono">3182301376</p>
+          </div>
+          <blockquote class="mt-4 text-xs text-zinc-500 italic" id="docCita">
+            “Y sobre todas las cosas, cuida tu mente, porque ella es la fuente de la vida.” — Proverbios 4:23
+          </blockquote>
         </div>
       </div>
     </section>
@@ -126,6 +139,97 @@
     document.getElementById("btnImprimir").addEventListener("click", () => {
       window.print();
     });
+  </script>
+  <!-- Datos embebidos desde las imágenes enviadas -->
+  <script id="bono-data" type="application/json">
+  {
+    "doctor": {
+      "nombre": "Leydi Gómez",
+      "titulo": "Psicoterapeuta",
+      "servicios": ["Atención psicología", "Presencial y online"],
+      "telefono": "3182301376",
+      "citaBiblica": "Y sobre todas las cosas, cuida tu mente, porque ella es la fuente de la vida. Proverbios 4:23"
+    },
+    "personas": {
+      "dario": {"nombre": "Darío Quintero", "de": "Lucy", "nota": "Regalo de cumpleaños"},
+      "persona2": {"nombre": "— por definir —", "de": "—", "nota": "Regalo de cumpleaños"},
+      "persona3": {"nombre": "— por definir —", "de": "—", "nota": "Regalo de cumpleaños"},
+      "persona4": {"nombre": "— por definir —", "de": "—", "nota": "Regalo de cumpleaños"}
+    }
+  }
+  </script>
+
+  <script>
+    function getParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name) || "";
+    }
+
+    const data = JSON.parse(document.getElementById('bono-data').textContent);
+
+    const nombreEl = document.getElementById("nombre");
+    const cardNombreEl = document.getElementById("cardNombre");
+    const cardDeEl = document.getElementById("cardDe");
+    const inputNombre = document.getElementById("inputNombre");
+    const inputNota = document.getElementById("inputNota");
+    const cardNotaEl = document.getElementById("cardNota");
+
+    // Doctor
+    document.getElementById('docNombre').textContent = data.doctor.nombre;
+    document.getElementById('docTelefono').textContent = data.doctor.telefono;
+    document.getElementById('docCita').textContent = `“${data.doctor.citaBiblica.replace(/\"/g,'"')}”`;
+    const serviciosEl = document.getElementById('docServicios');
+    serviciosEl.innerHTML = '';
+    data.doctor.servicios.forEach(s => {
+      const li = document.createElement('li');
+      li.textContent = s;
+      serviciosEl.appendChild(li);
+    });
+
+    // Selección por URL: ?p=dario (u otro ID del JSON)
+    const personId = getParam('p');
+    if (personId && data.personas[personId]) {
+      const p = data.personas[personId];
+      nombreEl.textContent = p.nombre;
+      cardNombreEl.textContent = p.nombre;
+      cardDeEl.textContent = p.de;
+      cardNotaEl.textContent = p.nota || '🎂✨';
+      // Ocultar editor si vino por URL
+      document.getElementById('editor').classList.add('hidden');
+    }
+
+    // Permitir personalización manual si no hay ?p
+    const btnAplicar = document.getElementById('btnAplicar');
+    if (btnAplicar) {
+      btnAplicar.addEventListener('click', () => {
+        const name = (inputNombre?.value || "Amiga").trim();
+        const note = (inputNota?.value || "🎂✨").trim();
+        nombreEl.textContent = name;
+        cardNombreEl.textContent = name;
+        cardNotaEl.textContent = note;
+      });
+    }
+
+    const btnCompartir = document.getElementById('btnCompartir');
+    if (btnCompartir) {
+      btnCompartir.addEventListener('click', async () => {
+        const id = personId || 'dario';
+        const url = `${location.origin}${location.pathname}?p=${encodeURIComponent(id)}`;
+        if (navigator.clipboard) {
+          await navigator.clipboard.writeText(url);
+          alert("Enlace copiado al portapapeles");
+        } else {
+          prompt("Copia este enlace:", url);
+        }
+      });
+    }
+
+    const btnImprimir = document.getElementById('btnImprimir');
+    if (btnImprimir) {
+      btnImprimir.addEventListener('click', () => {
+        window.print();
+      });
+    }
   </script>
 </body>
 </html>
